@@ -531,16 +531,16 @@ function InvoicesTab() {
     }
   })
 
-  const { data: orders = [] } = useQuery({
-    queryKey: ['invoiceable-orders'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('sales_orders')
-        .select('id, number, customer_id, business_partners(name), sales_order_lines(*)')
-        .in('status', ['confirmed', 'delivered', 'partially_delivered'])
-      return data || []
-    }
-  })
+ const { data: orders = [] } = useQuery({
+  queryKey: ['invoiceable-orders'],
+  queryFn: async () => {
+    const { data } = await supabase
+      .from('sales_orders')
+      .select('id, number, customer_id, customer:business_partners!customer_id(name), sales_order_lines(*)')
+      .in('status', ['confirmed', 'delivered', 'partially_delivered'])
+    return data || []
+  }
+})
 
   const { register, handleSubmit, reset, watch, formState: { isSubmitting } } = useForm()
   const watchOrder = watch('sales_order_id')
