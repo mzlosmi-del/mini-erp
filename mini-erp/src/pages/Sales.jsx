@@ -578,7 +578,7 @@ function InvoicesTab() {
   const issue = useMutation({
     mutationFn: async (inv) => {
       await supabase.from('invoices').update({ status: 'issued' }).eq('id', inv.id)
-      await supabase.rpc('post_sales_invoice', { invoice_id: inv.id })
+      await supabase.rpc('post_sales_invoice', { p_invoice_id: inv.id })
     },
     onSuccess: () => qc.invalidateQueries(['invoices'])
   })
