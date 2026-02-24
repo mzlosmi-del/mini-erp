@@ -346,16 +346,16 @@ function DeliveriesTab() {
     }
   })
 
-  const { data: confirmedOrders = [] } = useQuery({
-    queryKey: ['confirmed-orders'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('sales_orders')
-        .select('id, number, customer_id, business_partners(name), sales_order_lines(*, products(name, type))')
-        .in('status', ['confirmed', 'partially_delivered'])
-      return data || []
-    }
-  })
+ const { data: confirmedOrders = [] } = useQuery({
+  queryKey: ['confirmed-orders'],
+  queryFn: async () => {
+    const { data } = await supabase
+      .from('sales_orders')
+      .select('id, number, customer_id, customer:business_partners!customer_id(name), sales_order_lines(*, products(name, type))')
+      .in('status', ['confirmed', 'partially_delivered'])
+    return data || []
+  }
+})
 
   const { data: allPartners = [] } = useQuery({
     queryKey: ['all-partners-light'],
