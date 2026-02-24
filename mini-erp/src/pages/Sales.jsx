@@ -51,22 +51,23 @@ function SalesOrdersTab() {
   })
 
   const { data: customers = [] } = useQuery({
-    queryKey: ['customers'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('business_partners')
-        .select('id, name')
-        .eq('is_active', true)
-        .in('id', supabase.from('business_partner_types').select('partner_id').eq('type', 'customer'))
-        .order('name')
-      // fallback: get all with customer type
-      const { data: types } = await supabase.from('business_partner_types').select('partner_id').eq('type', 'customer')
-      const ids = (types || []).map(t => t.partner_id)
-      if (!ids.length) return []
-      const { data: partners } = await supabase.from('business_partners').select('id, name').in('id', ids).order('name')
-      return partners || []
-    }
-  })
+  queryKey: ['customers'],
+  queryFn: async () => {
+    const { data: types } = await supabase
+      .from('business_partner_types')
+      .select('partner_id')
+      .eq('type', 'customer')
+    const ids = (types || []).map(t => t.partner_id)
+    if (!ids.length) return []
+    const { data } = await supabase
+      .from('business_partners')
+      .select('id, name')
+      .in('id', ids)
+      .eq('is_active', true)
+      .order('name')
+    return data || []
+  }
+})
 
   const { data: partners = [] } = useQuery({
     queryKey: ['all-partners-light'],
